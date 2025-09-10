@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: enterprise-genai-backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: enterprise-genai-backend
+  template:
+    metadata:
+      labels:
+        app: enterprise-genai-backend
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+      containers:
+      - name: genai-backend
+        image: enterprise-genai-backend:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8000
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 8000
+        envFrom:
+        - secretRef:
+            name: genai-secrets
+            optional: true
