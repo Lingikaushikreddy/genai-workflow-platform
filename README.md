@@ -1,6 +1,6 @@
 # 🚀 Enterprise GenAI Workflow Automation Platform
 
-[![CI](https://img.shields.io/badge/build-passing-brightgreen.svg?logo=github)](https://github.com/)
+[![CI](https://github.com/Lingikaushikreddy/genai-workflow-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/Lingikaushikreddy/genai-workflow-platform/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg?logo=python)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-009688.svg?logo=fastapi)](https://fastapi.tiangolo.com)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg?logo=docker)](https://www.docker.com/)
