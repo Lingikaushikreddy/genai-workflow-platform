@@ -65,7 +65,11 @@ class BodySizeLimitMiddleware:
             return
 
         content_length = Headers(scope=scope).get("content-length")
-        if content_length and content_length.isdigit() and int(content_length) > self.max_bytes:
+        if (
+            content_length
+            and content_length.isdigit()
+            and int(content_length) > self.max_bytes
+        ):
             await self._reject(send)
             return
 
@@ -227,7 +231,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     async def http_error_handler(request: Request, exc: StarletteHTTPException):
         code = _HTTP_ERROR_CODES.get(exc.status_code, "http_error")
         message = exc.detail if isinstance(exc.detail, str) else "HTTP error."
-        return JSONResponse(status_code=exc.status_code, content=_error_body(code, message))
+        return JSONResponse(
+            status_code=exc.status_code, content=_error_body(code, message)
+        )
 
     @app.exception_handler(Exception)
     async def unhandled_error_handler(request: Request, exc: Exception):
