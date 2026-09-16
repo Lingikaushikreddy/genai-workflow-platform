@@ -1,15 +1,18 @@
 import operator
 from typing import Annotated, Sequence, TypedDict
-from langchain_core.messages import BaseMessage, HumanMessage, AIMessage
+
+from langchain_core.messages import BaseMessage, HumanMessage
 from langgraph.graph import END, StateGraph
-import time
-from app.models.schemas import WorkflowMetadata, Source
+
+from app.models.schemas import Source
+
 
 class AgentState(TypedDict):
     messages: Annotated[Sequence[BaseMessage], operator.add]
     query: str
     context: str
     sources: list[Source]
+
 
 class WorkflowEngine:
     def __init__(self, llm, vector_store, retrieval_k: int):
@@ -30,11 +33,15 @@ class WorkflowEngine:
     def _retrieve_node(self, state: AgentState):
         docs = self.vector_store.similarity_search(state["query"], k=self.retrieval_k)
         context = "\n".join([doc.page_content for doc in docs])
-        sources = [Source(content=doc.page_content, metadata=doc.metadata) for doc in docs]
+        sources = [
+            Source(content=doc.page_content, metadata=doc.metadata) for doc in docs
+        ]
         return {"context": context, "sources": sources}
 
     def _generate_node(self, state: AgentState):
-        prompt = f"Answer based on context:\n\n{state['context']}\n\nQuery: {state['query']}"
+        prompt = (
+            f"Answer based on context:\n\n{state['context']}\n\nQuery: {state['query']}"
+        )
         response = self.llm.invoke([HumanMessage(content=prompt)])
         return {"messages": [response]}
 
@@ -42,9 +49,8 @@ class WorkflowEngine:
         state = {"query": query, "messages": [], "context": "", "sources": []}
         result = self.graph.invoke(state)
         return result
-        
+
     async def stream(self, query: str):
-        state = {"query": query, "messages": [], "context": "", "sources": []}
         # Simulating stream for mock
         yield {"event": "context", "data": {"sources": []}}
         yield {"event": "token", "data": {"token": "Generated token "}}

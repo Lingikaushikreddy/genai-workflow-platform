@@ -1,8 +1,9 @@
+import json
 import logging
 from contextvars import ContextVar
-import json
 
 request_id_var: ContextVar[str] = ContextVar("request_id", default="<none>")
+
 
 class JSONFormatter(logging.Formatter):
     def format(self, record):
@@ -10,7 +11,7 @@ class JSONFormatter(logging.Formatter):
             "level": record.levelname,
             "message": record.getMessage(),
             "request_id": request_id_var.get(),
-            "name": record.name
+            "name": record.name,
         }
         if hasattr(record, "duration_ms"):
             log_obj["duration_ms"] = record.duration_ms
@@ -19,6 +20,7 @@ class JSONFormatter(logging.Formatter):
         if hasattr(record, "mock_mode"):
             log_obj["mock_mode"] = record.mock_mode
         return json.dumps(log_obj)
+
 
 def setup_logging(level_name: str):
     logger = logging.getLogger()
